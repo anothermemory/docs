@@ -1,0 +1,249 @@
+= STRUCTURE
+
+== Memory
+
+=== Overview
+Memory is a separate container for some data like "notebook" for notes for example.
+
+=== Memory Storage Types
+
+There are multiple memory storage types available. They are completely the same from functionality point of view. The difference
+is only in how they are stored/managed data.
+
+==== Directory
+Storage of this type stores everything inside single root directory. All data is just plain text files. This directory
+can be then backed up, copied etc.
+
+==== Git repository
+Storage of this type also stores everything inside single root directory similar to the Directory type. But content of
+this directory is stored inside git repository and content is commited and synchronized with remote origin automatically.
+
+== Units
+=== Overview
+Single atomic data item stored in the memory is unit. Each memory contains one single root unit.
+There are different types of units can be stored in the memory. Some of them are simple like plain text unit or image
+unit. Others are more complex like list unit or table unit etc.
+
+=== Types
+There are lot of different unit types available.
+
+.Unit Types
+[options="header"]
+|===
+| Category | Unit Type | Description
+
+.5+| Common
+| UNIT_LIST | Stores list of other units
+| UNIT_TABLE | Stores other units inside but organizes them as a table so rows, columns can be specified etc.
+| UNIT_REF | Stores reference to some other unit
+| UNIT_ATTACHMENT | Stores some binary attachment
+| UNIT_COMPLEX a| Stores following data:
+
+* list or parent units
+* list of child units
+* list of related units
+
+.4+| Text
+| TEXT_PLAIN | Stores plain text content
+| TEXT_MARKDOWN | Stores text in markdown format
+| TEXT_TODO | Stores list of textual items. Each item has flag finished or not
+| TEXT_CODE | Stores source code text. Generally plain text but with some additional options related to the syntax.
+| Image | IMAGE_GENERIC | Stores generic image content
+.2+| Diagram
+| DIAGRAM_GRAPHVIZ | Stores graphviz diagram. Generally plain text but with some additional graphviz options.
+| DIAGRAM_PLANTUML | Stores plantuml diagram. Generally plain text but with some additional plantuml options.
+.2+| External integrations
+| EVERNOTE_NOTE | Stores external evernote note
+| GITHUB_GIST | Stores github gist
+|===
+
+== Diagrams
+=== High-level
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+
+package storage <<Database>> {
+    interface MemoryStorage {
+    }
+
+    DirectoryMemoryStorage ..|> MemoryStorage
+    MemoryStorage <|.. GitMemoryStorage
+}
+
+package units <<Frame>> {
+    interface Unit {
+        GUID data
+        String title
+    }
+
+    package general <<Frame>> {
+        UnitList ..|> Unit
+        UnitTable ..|> Unit
+        UnitAttachment ..|> Unit
+        UnitRef ..|> Unit
+        UnitComplex ..|> Unit
+    }
+
+    package diagram <<Frame>> {
+        UnitDiagramGraphviz ..|> Unit
+        UnitDiagramPlantuml ..|> Unit
+    }
+
+    package text <<Frame>> {
+        Unit <|.. UnitTextPlain
+        Unit <|.. UnitTextMarkdown
+        Unit <|.. UnitTextTodo
+        Unit <|.. UnitTextCode
+    }
+
+    package image <<Frame>> {
+        Unit <|.. UnitImageGeneric
+    }
+
+    package integrations <<Frame>> {
+        Unit <|.. UnitEvernoteNote
+        Unit <|.. UnitGithubGist
+    }
+}
+
+package main <<Cloud>> {
+    class Memory
+    Memory *-- MemoryStorage : "storage"
+    Memory *--  Unit : "root"
+}
+....
+
+=== Units
+==== General
+===== UnitRef
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+class UnitRef ..|> interface Unit
+UnitRef o-- Unit : "target"
+....
+
+===== UnitList
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+class UnitList ..|> interface Unit
+UnitList "0" *-- "*" Unit : "units"
+....
+
+===== UnitAttachment
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+class UnitAttachment ..|> interface Unit
+class UnitAttachment {
+    Byte data
+    Int size
+    String mimeType
+}
+....
+
+===== UnitComplex
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+
+class UnitComplexRelation {
+    String title
+}
+
+UnitComplexRelation o-- Unit : "from"
+UnitComplexRelation o-- Unit : "to"
+
+class UnitComplex ..|> interface Unit
+UnitComplex "0" *-- "*" Unit : "children"
+UnitComplex "0" --o "*" Unit : "parents"
+UnitComplex "0" *-- "*" UnitComplexRelation : "relations"
+
+
+
+....
+
+==== Text
+===== UnitTextPlain
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+class UnitTextPlain ..|> interface Unit
+class UnitTextPlain {
+    String data
+}
+....
+
+===== UnitTextMarkdown
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+class UnitTextMarkdown ..|> interface Unit
+class UnitTextMarkdown {
+    String data
+}
+....
+
+===== UnitTextCode
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+
+class UnitTextCode {
+    String data
+}
+
+enum Language {
+    JAVA
+    PHP
+    RUBY
+}
+class UnitTextCode ..|> interface Unit
+class UnitTextCode *-- Language: "language"
+....
+
+===== UnitTextTodo
+
+[plantuml]
+....
+hide empty methods
+hide empty fields
+left to right direction
+
+class UnitTextTodoItem {
+    String data
+    Bool done
+}
+
+class UnitTextTodo ..|> interface Unit
+class UnitTextTodo "0" *-- "*" UnitTextTodoItem : "items"
+....
+==== Diagram
+==== Image
+==== Integrations
