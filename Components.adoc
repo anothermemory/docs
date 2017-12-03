@@ -1,0 +1,43 @@
+= COMPONENTS
+
+[plantuml]
+....
+
+[Library]
+note left of [Library]
+Core functionality implementation for working with memory and units
+end note
+
+[REST Service] ..> [Library] : use
+note left of [REST Service]
+Library as a service.
+end note
+
+[Javascript Client] ..> [REST Service] : use
+note left of [Javascript Client]
+Easy to use javascript interface for the REST service
+end note
+
+[Web Client] ..> [Javascript Client] : use
+note top of [Web Client]
+HTML Single Page App
+end note
+
+[Desktop Native Remote Client] ..> [REST Service]
+note top of [Desktop Native Remote Client]
+Maybe Swift/QT
+end note
+
+[Desktop Cross-Platform Client] ..> [Javascript Client]
+note top of [Desktop Cross-Platform Client]
+Maybe Electron
+end note
+
+[Desktop Native Client] ..> [Library]
+note top of [Desktop Native Client]
+Maybe Swift/QT
+end note
+
+[Evernote Importer] ..> [Library]
+
+....
