@@ -1,0 +1,47 @@
+= Features
+
+* Different storages and their combinations
+** Filesystem
+** Git repo
+** aws s3
+** google drive
+** one drive
+** web-dav?
+** local-proxy (proxy another storage, local read but remote write)
+** backup storage (one storage for using, another in parallel for backup)
+** encryption storage (may act as proxy for others and adds encryption)
+** convert from one storage to another one
+
+* evernote import
+
+* automation
+** cli client
+** apple script support
+** sdk on different languages
+
+* structure templates
+** evernote
+** thebrain
+
+* attachments
+** images
+** raw files
+** office files with editing support if possible
+** evernote notes
+** github gist
+** google drive files
+** file from directory
+
+* diagrams
+** dia
+** plantuml
+** graphviz
+
+* code playground
+** code editing (like Ace)
+** ability to run code
+** dash integration
+
+* Org mode in cell (tables, calculations etc.)
+
+* search

@@ -1,0 +1,16 @@
+# Use-cases
+
+Typical usage flow for usage with synced memory:
+
+Initial memory creation
+
+* Create memory (fill all required params)
+* Open memory
+
+Adding some content (only one unit)
+* Create new root unit (some simple unit like plain text)
+
+Adding some content (multiple units)
+* Create new root unit of type list
+* Create new unit and add it as a child to the list
+
